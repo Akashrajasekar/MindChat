@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Start the conversation immediately when page loads
   startInitialConversation();
+  // Add this near the top of your file
 
   // Data storage for quotes
   const quotes = {
@@ -136,9 +137,9 @@ document.addEventListener("DOMContentLoaded", function () {
             "Stressed 😫",
             "Sad 😢",
           ]);
-        }, 1000);
-      }, 800);
-    }, 1500);
+        }, 1200);
+      }, 1000);
+    }, 1700);
   }
 
   function sendUserMessage() {
@@ -327,12 +328,18 @@ document.addEventListener("DOMContentLoaded", function () {
       // Handle thank you
       else if (lowerMessage.includes("thank")) {
         handleThanks();
+      } else if (
+        lowerMessage.includes("story about") ||
+        lowerMessage.includes("tell me a story") ||
+        lowerMessage.includes("generate a story")
+      ) {
+        generateCustomStory(lowerMessage);
       }
       // Handle general queries
       else {
         handleGeneralQuery();
       }
-    }, 1000); // Delayed response for natural conversation flow
+    }, 1200); // Delayed response for natural conversation flow
   }
 
   // Handler functions to make code more modular and maintainable
@@ -372,10 +379,10 @@ document.addEventListener("DOMContentLoaded", function () {
                   "Another quote",
                 ]
               );
-            }, 1000);
-          }, 1500);
-        }, 1200);
-      }, 1000);
+            }, 1200);
+          }, 1700);
+        }, 1400);
+      }, 1200);
     } else if (
       message.includes("okay") ||
       message.includes("fine") ||
@@ -407,10 +414,10 @@ document.addEventListener("DOMContentLoaded", function () {
                   "Just chat",
                 ]
               );
-            }, 1000);
-          }, 1500);
-        }, 1200);
-      }, 1000);
+            }, 1200);
+          }, 1700);
+        }, 1400);
+      }, 1200);
     } else if (
       message.includes("not so good") ||
       message.includes("stressed") ||
@@ -448,10 +455,10 @@ document.addEventListener("DOMContentLoaded", function () {
                   "Not now",
                 ]
               );
-            }, 1200);
-          }, 2000);
-        }, 1500);
-      }, 1800);
+            }, 1400);
+          }, 2200);
+        }, 1700);
+      }, 2000);
     } else {
       // Default if we can't determine mood
       conversationState.currentMood = "neutral";
@@ -514,10 +521,10 @@ document.addEventListener("DOMContentLoaded", function () {
               "Mental health tip",
               "That's all for now",
             ]);
-          }, 800);
-        }, 1500);
-      }, 1200);
-    }, 1000);
+          }, 1000);
+        }, 1700);
+      }, 1400);
+    }, 1200);
   }
 
   function offerRelaxationOptions() {
@@ -546,10 +553,10 @@ document.addEventListener("DOMContentLoaded", function () {
               "Would you like to try a relaxation exercise to complement this tip?",
               ["Yes, that sounds good", "Another tip instead", "No thanks"]
             );
-          }, 1000);
-        }, 2000);
-      }, 1200);
-    }, 1000);
+          }, 1200);
+        }, 2200);
+      }, 1400);
+    }, 1200);
   }
 
   function handleRejection() {
@@ -600,8 +607,8 @@ document.addEventListener("DOMContentLoaded", function () {
           "Positive quote",
           "That's all for now",
         ]);
-      }, 1000);
-    }, 1500);
+      }, 1200);
+    }, 1700);
   }
 
   function handleNeutralFeedback() {
@@ -617,8 +624,8 @@ document.addEventListener("DOMContentLoaded", function () {
           "Would you like to try a different type of exercise, or perhaps a mental health tip instead?",
           ["Try different exercise", "Mental health tip", "Positive quote"]
         );
-      }, 1200);
-    }, 1800);
+      }, 1400);
+    }, 2000);
   }
 
   function handleThanks() {
@@ -690,8 +697,8 @@ document.addEventListener("DOMContentLoaded", function () {
               stepIndex++;
               showNextStep();
             }
-          }, 1000);
-        }, 2000);
+          }, 1200);
+        }, 2200);
       } else if (exerciseIndex !== 0) {
         // Skip for breathing exercise as it has special handling
         finishExercise();
@@ -731,4 +738,52 @@ document.addEventListener("DOMContentLoaded", function () {
   // 7. Motivational messages based on usage patterns
   // 8. Personalized user experience based on preferences
   // ------------------------------
+  async function generateCustomStory(userPrompt) {
+    showTypingIndicator();
+
+    // Define the LLM request, filtering out violent themes
+    const requestBody = {
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are a creative storyteller who writes short, engaging, and non-violent stories based on user preferences. Avoid any themes of harm, violence, or negativity.",
+        },
+        {
+          role: "user",
+          content: `Write a short, peaceful, and engaging story in the genre of: ${userPrompt}. Ensure it's uplifting and appropriate.`,
+        },
+      ],
+      model: "llama-3.3-70b-versatile",
+      temperature: 0.7,
+      max_completion_tokens: 500,
+      top_p: 1,
+    };
+
+    try {
+      const response = await fetch("https://api.groq.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer YOUR_GROQ_API_KEY`,
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      const data = await response.json();
+      removeTypingIndicator();
+
+      if (data.choices && data.choices.length > 0) {
+        sendBotMessage(data.choices[0].message.content);
+      } else {
+        sendBotMessage(
+          "I couldn't generate a story right now. Try again later!"
+        );
+      }
+    } catch (error) {
+      removeTypingIndicator();
+      sendBotMessage("Oops! Something went wrong while creating your story.");
+      console.error("Error fetching story:", error);
+    }
+  }
 });
