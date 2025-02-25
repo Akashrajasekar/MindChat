@@ -676,13 +676,20 @@ document.addEventListener("DOMContentLoaded", function () {
               exerciseIndex === 0 &&
               stepIndex === exercise.steps.length - 1
             ) {
+              // Create a container for the breathing animation
+              const breathingContainer = document.createElement("div");
+              breathingContainer.classList.add("breathing-container");
+              chatBody.appendChild(breathingContainer);
+
+              // Create the animation element (the circle)
+              // The text will now be handled by CSS ::after pseudo-element
               const breathingDiv = document.createElement("div");
               breathingDiv.classList.add("breathing-animation");
-              breathingDiv.textContent = "Breathe";
-              chatBody.appendChild(breathingDiv);
+              breathingContainer.appendChild(breathingDiv);
+
               chatBody.scrollTop = chatBody.scrollHeight;
 
-              // Continue after animation
+              // After a few cycles, end the exercise
               setTimeout(() => {
                 finishExercise();
               }, 15000);
