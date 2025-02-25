@@ -11,11 +11,11 @@ document.addEventListener("DOMContentLoaded", function () {
     currentTopic: null,
     exerciseInProgress: false,
     lastQuoteType: null,
+    waitingForStoryTheme: false, // Add this new property
   };
 
   // Start the conversation immediately when page loads
   startInitialConversation();
-  // Add this near the top of your file
 
   // Data storage for quotes
   const quotes = {
@@ -78,6 +78,16 @@ document.addEventListener("DOMContentLoaded", function () {
         "Name 1 thing you can taste right now (or a favorite taste).",
       ],
     },
+    {
+      name: "Relaxing Story",
+      steps: [
+        "I'll create a calming story based on a theme you provide.",
+        "As you read the story, try to visualize the scenes described.",
+        "Let your imagination create a mental sanctuary.",
+        "Notice how your body feels as you immerse yourself in the story.",
+        "Take deep, slow breaths as you experience the narrative.",
+      ],
+    },
   ];
 
   // Mental health tips
@@ -123,7 +133,7 @@ document.addEventListener("DOMContentLoaded", function () {
     showTypingIndicator();
     setTimeout(() => {
       removeTypingIndicator();
-      sendBotMessage("Hi there! I'm MindfulBot, your mental health companion.");
+      sendBotMessage("Hi there! I'm MindChat, your mental health companion.");
 
       setTimeout(() => {
         showTypingIndicator();
@@ -137,9 +147,9 @@ document.addEventListener("DOMContentLoaded", function () {
             "Stressed 😫",
             "Sad 😢",
           ]);
-        }, 1200);
-      }, 1000);
-    }, 1700);
+        }, 1000);
+      }, 800);
+    }, 1500);
   }
 
   function sendUserMessage() {
@@ -238,6 +248,14 @@ document.addEventListener("DOMContentLoaded", function () {
       // First interaction - mood assessment
       if (conversationState.isFirstInteraction) {
         handleInitialMoodAssessment(lowerMessage);
+      } else if (conversationState.waitingForStoryTheme) {
+        // Check for story theme input first, before checking if exercise is in progress
+        handleStoryThemeInput(message);
+      } else if (
+        lowerMessage.includes("story") ||
+        lowerMessage.includes("relaxing story")
+      ) {
+        startStoryExercise();
       }
       // Exercise in progress, don't interrupt
       else if (conversationState.exerciseInProgress) {
@@ -267,6 +285,7 @@ document.addEventListener("DOMContentLoaded", function () {
       ) {
         handleQuoteRequest();
       }
+
       // Handle relaxation requests
       else if (
         lowerMessage.includes("yes") &&
@@ -306,6 +325,8 @@ document.addEventListener("DOMContentLoaded", function () {
         lowerMessage.includes("later")
       ) {
         handleRejection();
+      } else if (lowerMessage.includes("another story")) {
+        startStoryExercise();
       }
       // Handle info request
       else if (
@@ -328,18 +349,12 @@ document.addEventListener("DOMContentLoaded", function () {
       // Handle thank you
       else if (lowerMessage.includes("thank")) {
         handleThanks();
-      } else if (
-        lowerMessage.includes("story about") ||
-        lowerMessage.includes("tell me a story") ||
-        lowerMessage.includes("generate a story")
-      ) {
-        generateCustomStory(lowerMessage);
       }
       // Handle general queries
       else {
         handleGeneralQuery();
       }
-    }, 1200); // Delayed response for natural conversation flow
+    }, 1000); // Delayed response for natural conversation flow
   }
 
   // Handler functions to make code more modular and maintainable
@@ -379,10 +394,10 @@ document.addEventListener("DOMContentLoaded", function () {
                   "Another quote",
                 ]
               );
-            }, 1200);
-          }, 1700);
-        }, 1400);
-      }, 1200);
+            }, 1000);
+          }, 1500);
+        }, 1200);
+      }, 1000);
     } else if (
       message.includes("okay") ||
       message.includes("fine") ||
@@ -414,10 +429,10 @@ document.addEventListener("DOMContentLoaded", function () {
                   "Just chat",
                 ]
               );
-            }, 1200);
-          }, 1700);
-        }, 1400);
-      }, 1200);
+            }, 1000);
+          }, 1500);
+        }, 1200);
+      }, 1000);
     } else if (
       message.includes("not so good") ||
       message.includes("stressed") ||
@@ -455,10 +470,10 @@ document.addEventListener("DOMContentLoaded", function () {
                   "Not now",
                 ]
               );
-            }, 1400);
-          }, 2200);
-        }, 1700);
-      }, 2000);
+            }, 1200);
+          }, 2000);
+        }, 1500);
+      }, 1800);
     } else {
       // Default if we can't determine mood
       conversationState.currentMood = "neutral";
@@ -488,6 +503,204 @@ document.addEventListener("DOMContentLoaded", function () {
           }, 1500);
         }, 1200);
       }, 1000);
+    }
+  }
+  // Add these at the top of your file where other data structures are defined
+
+  // Example stories for offline use or when API fails
+  const fallbackStories = [
+    {
+      theme: "nature",
+      content:
+        "Imagine walking through a peaceful forest. Sunlight filters through the leaves, creating dappled patterns on the soft ground beneath your feet. The gentle sound of a stream echoes in the distance. Birds sing softly from the branches above. As you walk, you feel the tension leaving your body with each step. The air is fresh and clean, filling your lungs with renewed energy. You find a small clearing with a patch of soft grass and sit down, taking in the beauty and tranquility around you. For a few minutes, all your worries seem far away, replaced by the simple joy of being present in this peaceful moment.",
+    },
+    {
+      theme: "ocean",
+      content:
+        "You're sitting on a warm, sandy beach. The ocean stretches before you, endless shades of blue meeting the sky at the horizon. Gentle waves roll in, creating a soothing rhythm as they reach the shore. The sound of water washing over sand creates a natural melody that helps your mind slow down. A soft breeze carries the salt air, refreshing and cleansing. You dig your toes into the warm sand, feeling grounded and connected to the earth. Time seems to slow down here, and you allow yourself to simply exist in this moment, breathing with the rhythm of the waves, letting go of any tension with each exhale.",
+    },
+    {
+      theme: "mountains",
+      content:
+        "You stand at the top of a gentle hill, overlooking a vast mountain range. The peaks stretch into the distance, their slopes painted in shades of green and purple. The air here is crisp and cool, filling your lungs with vitality. A hawk circles lazily overhead, riding the warm air currents. The vast open space before you creates a sense of possibility and freedom. You take a deep breath, feeling small yet connected to the immense beauty around you. There's a profound quiet here, broken only by the occasional whisper of wind through the nearby pines. In this expansive setting, your thoughts seem to find more space, and your concerns feel lighter.",
+    },
+    {
+      theme: "garden",
+      content:
+        "You're wandering through a beautiful garden in full bloom. Flowers of every color surround you—vibrant reds, soft purples, sunny yellows, and gentle pinks. Their sweet fragrance fills the air with a natural perfume that lifts your spirits. Butterflies flutter from blossom to blossom, and bees hum contentedly as they collect nectar. Stone pathways wind through the garden, leading to small benches and peaceful nooks. You find a comfortable spot beside a small fountain, whose gentle splashing creates a soothing soundtrack. The sunlight is warm on your skin, and a sense of peace settles over you. This is a place of renewal and growth, reminding you that beauty can be found even in the smallest details of life.",
+    },
+    {
+      theme: "cozy",
+      content:
+        "You're sitting in a comfortable chair by a crackling fireplace. Outside the window, soft snow is falling, creating a world of quiet white. A warm blanket is wrapped around your shoulders, and the gentle weight of it feels like a reassuring hug. The scent of cinnamon and cloves drifts from a steaming mug of tea beside you. The room is filled with soft, golden light that creates a cocoon of warmth and safety. A book rests in your lap, but for now, you're content to simply watch the dancing flames and enjoy this moment of perfect comfort. The world outside, with all its demands and worries, seems very far away in this peaceful haven you've created.",
+    },
+    {
+      theme: "rainy day",
+      content:
+        "You're sitting by a large window, watching raindrops trace lazy patterns down the glass. The gentle patter creates a soothing rhythm that slows your breathing naturally. The sky outside is a soft gray, making your cozy indoor space feel even more secure and warm. A soft blanket is draped across your lap, and the subtle weight of it is comforting. The fresh scent of rain fills the air, cleansing and renewing. There's something uniquely calming about being sheltered and dry while listening to the music of rainfall. You take a deep breath and feel the tension in your shoulders release. This quiet moment is a perfect pause from the busy world, a chance to simply be present with the peaceful sound of nature's gentle cleansing.",
+    },
+  ];
+
+  // API key - in a real production app, you would store this more securely
+  // For now, we'll define it here for simplicity
+  const GROQ_API_KEY =
+    "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"; // Replace with your actual API key
+
+  // Add this to your relaxationExercises array
+  const storyRelaxationExercise = {
+    name: "Relaxing Story",
+    steps: [
+      "I'll create a calming story based on a theme you provide.",
+      "As you read the story, try to visualize the scenes described.",
+      "Let your imagination create a mental sanctuary.",
+      "Notice how your body feels as you immerse yourself in the story.",
+      "Take deep, slow breaths as you experience the narrative.",
+    ],
+  };
+
+  // Function that attempts to generate a story using the Groq API via fetch
+  async function generateStoryWithAPI(theme) {
+    // If API key isn't set, fall back to pre-written stories
+    if (
+      !GROQ_API_KEY ||
+      GROQ_API_KEY ===
+        "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"
+    ) {
+      console.log("No API key set, using fallback story");
+      return getFallbackStory(theme);
+    }
+
+    try {
+      const response = await fetch(
+        "https://api.groq.com/openai/v1/chat/completions",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${GROQ_API_KEY}`,
+          },
+          body: JSON.stringify({
+            model: "llama-3.3-70b-versatile",
+            messages: [
+              {
+                role: "system",
+                content:
+                  "You are a therapeutic storyteller focused on creating calming, positive narratives for mental wellbeing.",
+              },
+              {
+                role: "user",
+                content: `Create a short, relaxing story (150-200 words) centered around a theme of "${theme}". 
+              The story should be calming, positive, and support good mental health. 
+              Focus on sensory details and mindfulness. 
+              Use second-person perspective ("you") to help the reader imagine themselves in the scene. 
+              Avoid any references to anxiety, depression, or negative emotions.`,
+              },
+            ],
+            temperature: 0.7,
+            max_tokens: 300,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        console.error("API error:", response.status);
+        return getFallbackStory(theme);
+      }
+
+      const data = await response.json();
+      return data.choices[0]?.message?.content || getFallbackStory(theme);
+    } catch (error) {
+      console.error("Error generating story with API:", error);
+      return getFallbackStory(theme);
+    }
+  }
+
+  // Function to get a fallback story if API fails
+  function getFallbackStory(theme) {
+    // Try to match the theme
+    const lowerTheme = theme.toLowerCase();
+    let matchedTheme = fallbackStories.find(
+      (story) =>
+        lowerTheme.includes(story.theme) || story.theme.includes(lowerTheme)
+    );
+
+    // If no match, return a random story
+    if (!matchedTheme) {
+      const randomIndex = Math.floor(Math.random() * fallbackStories.length);
+      return fallbackStories[randomIndex].content;
+    }
+
+    return matchedTheme.content;
+  }
+
+  // Add this function to start the story generation exercise
+  function startStoryExercise() {
+    conversationState.exerciseInProgress = true;
+
+    sendBotMessage(
+      "I'd love to tell you a relaxing story. What theme or setting would you like the story to be about? For example: nature, ocean, mountains, a cozy cabin, or anything else that feels calming to you."
+    );
+
+    // Set a special state to indicate we're waiting for a story theme
+    conversationState.waitingForStoryTheme = true;
+  }
+
+  // Add this handler for when user provides a story theme
+  async function handleStoryThemeInput(theme) {
+    sendBotMessage(
+      `I'll create a relaxing story about ${theme}. Give me just a moment...`
+    );
+    showTypingIndicator();
+
+    try {
+      // Get the story - either from API or fallback
+      let story;
+
+      // Try with API first if key is set
+      if (GROQ_API_KEY && GROQ_API_KEY !== "YOUR_API_KEY_HERE") {
+        try {
+          story = await generateStoryWithAPI(theme);
+        } catch (error) {
+          console.error("API story generation failed:", error);
+          story = getFallbackStory(theme);
+        }
+      } else {
+        // If no API key, use fallback directly
+        story = getFallbackStory(theme);
+      }
+
+      setTimeout(() => {
+        removeTypingIndicator();
+        sendBotMessage(
+          "Here's your story. Take a moment to read it slowly and visualize the scene:"
+        );
+
+        setTimeout(() => {
+          sendBotMessage(story);
+
+          // After the story is completed
+          setTimeout(() => {
+            conversationState.exerciseInProgress = false;
+            conversationState.waitingForStoryTheme = false;
+
+            sendBotMessage("How did the story make you feel?", [
+              "Relaxed",
+              "Peaceful",
+              "The same",
+              "I'd like another story",
+            ]);
+          }, 3000);
+        }, 1500);
+      }, 2000);
+    } catch (error) {
+      console.error("Error in story generation:", error);
+      removeTypingIndicator();
+      sendBotMessage(
+        "I'm having some trouble creating a story right now. Would you like to try a different relaxation exercise instead?",
+        ["Deep Breathing", "Muscle Relaxation", "Grounding Exercise"]
+      );
+      conversationState.exerciseInProgress = false;
+      conversationState.waitingForStoryTheme = false;
     }
   }
 
@@ -521,16 +734,21 @@ document.addEventListener("DOMContentLoaded", function () {
               "Mental health tip",
               "That's all for now",
             ]);
-          }, 1000);
-        }, 1700);
-      }, 1400);
-    }, 1200);
+          }, 800);
+        }, 1500);
+      }, 1200);
+    }, 1000);
   }
 
   function offerRelaxationOptions() {
     sendBotMessage(
       "I have several relaxation techniques that might help. Which one would you like to try?",
-      ["Deep Breathing", "Muscle Relaxation", "Grounding Exercise"]
+      [
+        "Deep Breathing",
+        "Muscle Relaxation",
+        "Grounding Exercise",
+        "Relaxing Story",
+      ]
     );
   }
 
@@ -553,10 +771,10 @@ document.addEventListener("DOMContentLoaded", function () {
               "Would you like to try a relaxation exercise to complement this tip?",
               ["Yes, that sounds good", "Another tip instead", "No thanks"]
             );
-          }, 1200);
-        }, 2200);
-      }, 1400);
-    }, 1200);
+          }, 1000);
+        }, 2000);
+      }, 1200);
+    }, 1000);
   }
 
   function handleRejection() {
@@ -607,8 +825,8 @@ document.addEventListener("DOMContentLoaded", function () {
           "Positive quote",
           "That's all for now",
         ]);
-      }, 1200);
-    }, 1700);
+      }, 1000);
+    }, 1500);
   }
 
   function handleNeutralFeedback() {
@@ -624,8 +842,8 @@ document.addEventListener("DOMContentLoaded", function () {
           "Would you like to try a different type of exercise, or perhaps a mental health tip instead?",
           ["Try different exercise", "Mental health tip", "Positive quote"]
         );
-      }, 1400);
-    }, 2000);
+      }, 1200);
+    }, 1800);
   }
 
   function handleThanks() {
@@ -704,8 +922,8 @@ document.addEventListener("DOMContentLoaded", function () {
               stepIndex++;
               showNextStep();
             }
-          }, 1200);
-        }, 2200);
+          }, 1000);
+        }, 2000);
       } else if (exerciseIndex !== 0) {
         // Skip for breathing exercise as it has special handling
         finishExercise();
@@ -745,56 +963,4 @@ document.addEventListener("DOMContentLoaded", function () {
   // 7. Motivational messages based on usage patterns
   // 8. Personalized user experience based on preferences
   // ------------------------------
-<<<<<<< HEAD
-  async function generateCustomStory(userPrompt) {
-    showTypingIndicator();
-
-    // Define the LLM request, filtering out violent themes
-    const requestBody = {
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are a creative storyteller who writes short, engaging, and non-violent stories based on user preferences. Avoid any themes of harm, violence, or negativity.",
-        },
-        {
-          role: "user",
-          content: `Write a short, peaceful, and engaging story in the genre of: ${userPrompt}. Ensure it's uplifting and appropriate.`,
-        },
-      ],
-      model: "llama-3.3-70b-versatile",
-      temperature: 0.7,
-      max_completion_tokens: 500,
-      top_p: 1,
-    };
-
-    try {
-      const response = await fetch("https://api.groq.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer YOUR_GROQ_API_KEY`,
-        },
-        body: JSON.stringify(requestBody),
-      });
-
-      const data = await response.json();
-      removeTypingIndicator();
-
-      if (data.choices && data.choices.length > 0) {
-        sendBotMessage(data.choices[0].message.content);
-      } else {
-        sendBotMessage(
-          "I couldn't generate a story right now. Try again later!"
-        );
-      }
-    } catch (error) {
-      removeTypingIndicator();
-      sendBotMessage("Oops! Something went wrong while creating your story.");
-      console.error("Error fetching story:", error);
-    }
-  }
 });
-=======
-});
->>>>>>> e1f3e50bdabd3b89d465838bf1cdf4606c89bac1

@@ -75,7 +75,7 @@ main {
   padding: 2rem 1rem;
 }
 
-.hero {
+/* .hero {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -96,6 +96,46 @@ main {
   height: auto;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+} */
+
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4rem 0;
+  min-height: 80vh; /* This makes the hero section take up most of the viewport height */
+  margin: 0 auto; /* Centers horizontally */
+  display: flex;
+  flex-direction: column; /* Changed from row to column */
+  justify-content: center; /* Centers vertically */
+  text-align: center; /* Centers text */
+}
+
+.hero-content {
+  flex: 1;
+  padding-right: 0; /* Remove the right padding */
+  max-width: 800px; /* Limit the width for better readability */
+  margin: 0 auto 2rem auto; /* Centers and adds space below */
+}
+
+.hero-image {
+  flex: 1;
+  max-width: 600px; /* Control the image size */
+  margin: 0 auto; /* Center the image */
+}
+
+.hero-img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.cta-buttons {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem; /* Adds space between buttons */
 }
 
 h1 {
@@ -474,7 +514,7 @@ footer {
     transform: scale(1.4);
     background-color: #2196f3;
   }
-  
+
   /* Hold phase: 33.33-50% (2s) */
   33.34% {
     transform: scale(1.4);
@@ -484,7 +524,7 @@ footer {
     transform: scale(1.4);
     background-color: #2196f3;
   }
-  
+
   /* Exhale phase: 50-100% (6s) */
   50.01% {
     transform: scale(1.4);
@@ -495,6 +535,27 @@ footer {
     background-color: #4caf50;
   }
 }
+
+@keyframes textChange {
+  /* Inhale text: 0-33.33% (4s) */
+  0%,
+  33.33% {
+    content: "Inhale";
+  }
+
+  /* Hold text: 33.33-50% (2s) */
+  33.34%,
+  50% {
+    content: "Hold";
+  }
+
+  /* Exhale text: 50-100% (6s) */
+  50.01%,
+  100% {
+    content: "Exhale";
+  }
+}
+
 .chat-messages {
   height: 300px;
   overflow-y: auto;
@@ -604,20 +665,4 @@ footer {
 .chat-form button:before {
   content: "→";
   font-size: 0.1rem;
-
-@keyframes textChange {
-  /* Inhale text: 0-33.33% (4s) */
-  0%, 33.33% {
-    content: "Inhale";
-  }
-  
-  /* Hold text: 33.33-50% (2s) */
-  33.34%, 50% {
-    content: "Hold";
-  }
-  
-  /* Exhale text: 50-100% (6s) */
-  50.01%, 100% {
-    content: "Exhale";
-  }
 }
