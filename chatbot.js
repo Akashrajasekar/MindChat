@@ -683,13 +683,20 @@ document.addEventListener("DOMContentLoaded", function () {
               exerciseIndex === 0 &&
               stepIndex === exercise.steps.length - 1
             ) {
+              // Create a container for the breathing animation
+              const breathingContainer = document.createElement("div");
+              breathingContainer.classList.add("breathing-container");
+              chatBody.appendChild(breathingContainer);
+
+              // Create the animation element (the circle)
+              // The text will now be handled by CSS ::after pseudo-element
               const breathingDiv = document.createElement("div");
               breathingDiv.classList.add("breathing-animation");
-              breathingDiv.textContent = "Breathe";
-              chatBody.appendChild(breathingDiv);
+              breathingContainer.appendChild(breathingDiv);
+
               chatBody.scrollTop = chatBody.scrollHeight;
 
-              // Continue after animation
+              // After a few cycles, end the exercise
               setTimeout(() => {
                 finishExercise();
               }, 15000);
@@ -738,6 +745,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // 7. Motivational messages based on usage patterns
   // 8. Personalized user experience based on preferences
   // ------------------------------
+<<<<<<< HEAD
   async function generateCustomStory(userPrompt) {
     showTypingIndicator();
 
@@ -787,3 +795,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 });
+=======
+});
+>>>>>>> e1f3e50bdabd3b89d465838bf1cdf4606c89bac1

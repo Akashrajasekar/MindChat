@@ -455,15 +455,28 @@ footer {
   color: white;
   font-weight: bold;
   animation: breathing 12s infinite;
+  position: relative;
+}
+
+.breathing-animation::after {
+  content: "Inhale";
+  position: absolute;
+  animation: textChange 12s infinite;
 }
 
 @keyframes breathing {
-  0%,
-  100% {
+  /* Inhale phase: 0-33.33% (4s) */
+  0% {
     transform: scale(1);
     background-color: #4caf50;
   }
-  40% {
+  33.33% {
+    transform: scale(1.4);
+    background-color: #2196f3;
+  }
+  
+  /* Hold phase: 33.33-50% (2s) */
+  33.34% {
     transform: scale(1.4);
     background-color: #2196f3;
   }
@@ -471,7 +484,13 @@ footer {
     transform: scale(1.4);
     background-color: #2196f3;
   }
-  60% {
+  
+  /* Exhale phase: 50-100% (6s) */
+  50.01% {
+    transform: scale(1.4);
+    background-color: #2196f3;
+  }
+  100% {
     transform: scale(1);
     background-color: #4caf50;
   }
@@ -585,4 +604,20 @@ footer {
 .chat-form button:before {
   content: "→";
   font-size: 0.1rem;
+
+@keyframes textChange {
+  /* Inhale text: 0-33.33% (4s) */
+  0%, 33.33% {
+    content: "Inhale";
+  }
+  
+  /* Hold text: 33.33-50% (2s) */
+  33.34%, 50% {
+    content: "Hold";
+  }
+  
+  /* Exhale text: 50-100% (6s) */
+  50.01%, 100% {
+    content: "Exhale";
+  }
 }
