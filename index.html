@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MindChat - Your Mental Health Companion</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <div class="logo">
+          <img src="Logo.png" alt="MindChat Logo" class="logo-img" />
+          <span>MindChat</span>
+        </div>
+        <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+        <label for="nav-toggle" class="nav-toggle-label">
+          <span></span>
+        </label>
+        <ul>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#demo">Demo</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-content">
+          <h1>Your Mental Health Companion</h1>
+          <p>
+            MindChat is here to support you 24/7. Talk to our AI-powered chatbot
+            for guidance, support, and mental health resources.
+          </p>
+          <div class="cta-buttons">
+            <a href="#demo" class="btn primary">Get Started</a>
+            <a href="#features" class="btn secondary">Learn More</a>
+          </div>
+        </div>
+        <div class="hero-image">
+          <img src="support.png" alt="Mental Health Support" class="hero-img" />
+        </div>
+      </section>
+
+      <section id="features" class="features">
+        <h2>Why Choose MindChat?</h2>
+        <div class="feature-grid">
+          <div class="feature">
+            <img
+              src="support.png"
+              alt="Compassionate Support"
+              class="feature-icon"
+            />
+            <h3>Compassionate Support</h3>
+            <p>
+              Always here to listen and provide emotional support, no matter the
+              time.
+            </p>
+          </div>
+          <div class="feature">
+            <img
+              src="privacy.png"
+              alt="Private & Secure"
+              class="feature-icon"
+            />
+            <h3>Private & Secure</h3>
+            <p>
+              Your conversations are confidential and protected with
+              state-of-the-art encryption.
+            </p>
+          </div>
+          <div class="feature">
+            <img
+              src="availability.png"
+              alt="24/7 Availability"
+              class="feature-icon"
+            />
+            <h3>24/7 Availability</h3>
+            <p>
+              Get support anytime, anywhere. MindChat is always ready to talk.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="demo" class="demo">
+        <h2>Try MindChat Now</h2>
+        <div class="chat-container">
+          <div id="chatBody" class="chat-messages">
+            <!-- Messages will be added here dynamically -->
+          </div>
+          <div class="chat-form">
+            <input
+              id="userInput"
+              type="text"
+              placeholder="Type your message..."
+              required
+            />
+            <button id="sendButton" type="button" class="btn primary">
+              Send
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" class="contact">
+        <h2>Start Your Journey to Better Mental Health</h2>
+        <p>
+          Join thousands of users who have found support and guidance with
+          MindChat.
+        </p>
+        <form class="subscribe-form">
+          <input type="email" placeholder="Enter your email" required />
+          <button type="submit" class="btn primary">Subscribe</button>
+        </form>
+        <p class="disclaimer">
+          By subscribing, you agree to our Terms of Service and Privacy Policy.
+        </p>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <div class="footer-logo">
+          <img src="Logo.png" alt="MindChat Logo" class="logo-img" />
+          <span>MindChat</span>
+        </div>
+        <nav class="footer-nav">
+          <a href="#">Terms of Service</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Contact Us</a>
+        </nav>
+      </div>
+      <p>&copy; 2024 MindChat. All rights reserved.</p>
+    </footer>
+    <script src="chatbot.js"></script>
+  </body>
+</html>
